@@ -18,7 +18,7 @@ const CombinedIdeaAndSearch: React.FC = () => {
       <Sequence from={0} durationInFrames={150}>
         <IdeaAnimation />
       </Sequence>
-      <Sequence from={150} durationInFrames={200}>
+      <Sequence from={150} durationInFrames={300}>
         <SearchAnimation />
       </Sequence>
     </>
@@ -31,7 +31,7 @@ export const MyComposition: React.FC = () => {
       <Composition
         id="IdeaAnimation"
         component={CombinedIdeaAndSearch}
-        durationInFrames={350} // 150 + 200
+        durationInFrames={450} // 150 + 300
         fps={30}
         width={1920}
         height={1080}
@@ -40,7 +40,7 @@ export const MyComposition: React.FC = () => {
       <Composition
         id="SearchAnimation"
         component={SearchAnimation}
-        durationInFrames={200}
+        durationInFrames={300}
         fps={30}
         width={1920}
         height={1080}

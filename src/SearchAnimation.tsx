@@ -55,15 +55,30 @@ export const SearchAnimation: React.FC = () => {
   
   const searchBarY = interpolate(moveUpSpring, [0, 1], [0, -420]);
 
-  // Camera scroll down to the bottom
-  const phase5Start = 110; // Scroll down starts after grid is visible
-  const scrollSpring = spring({
+  // Camera scroll 1: down to the bottom of the grid
+  const phase5Start = 110;
+  const scrollSpring1 = spring({
     frame: frame - phase5Start,
     fps,
     config: { damping: 16, stiffness: 70, mass: 1 },
   });
-  // Scroll up by ~2000px to see the bottom of the grid
-  const globalScrollY = interpolate(scrollSpring, [0, 1], [0, -2000]);
+  const scroll1 = interpolate(scrollSpring1, [0, 1], [0, -2000]);
+
+  // Camera scroll 2: down to the Pinterest card
+  // Reduced from 200 to 150 to minimize the idle duration
+  const phase6Start = 150;
+  const scrollSpring2 = spring({
+    frame: frame - phase6Start,
+    fps,
+    config: { damping: 16, stiffness: 70, mass: 1 },
+  });
+  
+  // Pinterest card is placed at +3400 offset. searchBarY is -420.
+  // We want its final position to be center (0). So we need total scroll of -2980.
+  // scroll1 provides -2000, so scroll2 should provide -980. Let's round to -1000.
+  const scroll2 = interpolate(scrollSpring2, [0, 1], [0, -1000]);
+
+  const globalScrollY = scroll1 + scroll2;
 
   // Tags data
   const tags = ["Ideas", "Creative", "Typography", "Inspiration", "Education", "Trends", "Product"];
@@ -96,7 +111,14 @@ export const SearchAnimation: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: `translateY(${globalScrollY}px)` }}>
+      <div style={{ 
+        width: '100%', 
+        height: '100%', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        transform: `translateY(${globalScrollY}px)`
+      }}>
         {/* Search Bar Container */}
         <div
           style={{
@@ -248,6 +270,53 @@ export const SearchAnimation: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pinterest Post Card */}
+        {frame >= phase5Start && (
+          <div
+            style={{
+              position: 'absolute',
+              transform: `translateY(${searchBarY + 3400}px)`,
+              width: 800,
+              backgroundColor: '#FFFFFF',
+              borderRadius: 32,
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.15)',
+              padding: 32,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 24,
+              zIndex: 10
+            }}
+          >
+            {/* Top Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24, color: '#111111' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  <span style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 24, fontWeight: 600 }}>2,9rb</span>
+                </div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
+              </div>
+              <div style={{ backgroundColor: '#e60023', color: 'white', padding: '12px 24px', borderRadius: 999, fontFamily: '"DM Sans", sans-serif', fontWeight: 600, fontSize: 20 }}>
+                Save
+              </div>
+            </div>
+            
+            {/* Video Area */}
+            <div style={{ width: '100%', height: 750, backgroundColor: '#333333', borderRadius: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {/* Play Button Triangle */}
+              <div style={{ width: 0, height: 0, borderTop: '40px solid transparent', borderBottom: '40px solid transparent', borderLeft: '60px solid rgba(255,255,255,0.4)', marginLeft: 15 }} />
+            </div>
+
+            {/* Bottom Text */}
+            <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 22, color: '#333', marginTop: 8 }}>
+              <span style={{ color: '#888' }}>after effect edits ... </span>
+              <span style={{ fontWeight: 600 }}>Hatsu.</span>
+            </div>
           </div>
         )}
       </div>
